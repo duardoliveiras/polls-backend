@@ -4,9 +4,14 @@ import { PrismaClient } from "@prisma/client";
 import { createPoll } from "./routes/create-poll";
 import { getPoll } from "./routes/get-poll";	
 import { votePoll } from "./routes/vote-poll";
-
+import cookie from "@fastify/cookie";
 
 const app = fastify(); // instantiate Fastify
+
+app.register(cookie, {
+    secret: 'my-secret', // set the secret for the cookies to be signed for avoiding the user to modify them
+    hook: 'onRequest', // set the cookie parser to run on every request
+}); // register the cookie plugin
 
 
 app.get('/hello', () => {

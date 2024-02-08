@@ -30,17 +30,21 @@ export async function votePoll(app: FastifyInstance){
                 }
             });
 
+            // if the user already voted in this poll and in this option
             if(userVoteBefore && userVoteBefore.pollOptionId === pollOptionId){
                 return reply.status(400).send( { 
                     message: "You already voted in this option."
                 });
+
+            // if the user already voted in this poll but in another option
             }else if(userVoteBefore){
                 await prisma.vote.update({
                     where: {
                         id: userVoteBefore.id
                     },
                     data: {
-                        pollOptionId: pollOptionId
+                        pollOptionId: pollOptionId,
+                        createdAt: new Date(),
                     }
                 
                 });
@@ -49,6 +53,7 @@ export async function votePoll(app: FastifyInstance){
             }
         }
         
+        // if the user never voted in this poll before
         if(!sessionId){
         sessionId = randomUUID(); // generate a random session id for the user
 

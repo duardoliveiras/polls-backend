@@ -36,7 +36,7 @@ git clone https://github.com/duardoliveiras/polls-backend.git
 2. Navigate to the project directory:
 
 ```bash
-cd project-directory
+cd polls-backend
 ```
 
 3. Install dependencies:
@@ -50,7 +50,7 @@ npm install
 5. Start the application:
 
 ```bash
-npm start
+npm run
 ```
 
 ## Usage

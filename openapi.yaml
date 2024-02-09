@@ -1,0 +1,100 @@
+openapi: 3.0.0
+info:
+  title: Polls API
+  description: API for creating, viewing, and voting on polls
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /polls:
+    post:
+      summary: Create a new poll
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                options:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Poll created successfully
+    get:
+      summary: Get all polls
+      responses:
+        '200':
+          description: A list of polls
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Poll'
+  /poll/{id}:
+    get:
+      summary: View a specific poll
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Poll details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Poll'
+  /polls/{id}/vote:
+    post:
+      summary: Vote on a poll
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pollOptionId:
+                  type: string
+      responses:
+        '200':
+          description: Vote successful
+  /poll/{id}/result:
+    get:
+      summary: Get poll results via WebSocket
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: WebSocket connection successful
+components:
+  schemas:
+    Poll:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        options:
+          type: array
+          items:
+            type: string

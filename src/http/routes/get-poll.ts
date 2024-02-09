@@ -1,8 +1,8 @@
 import { z } from 'zod';
 import { FastifyInstance } from 'fastify';
-import { prisma } from '../lib/prisma';
+import { prisma } from '../../lib/prisma';
 import { appendFile } from 'fs';
-import { redis } from '../lib/redis';
+import { redis } from '../../lib/redis';
 
 export async function getPoll(app: FastifyInstance) {
     app.get('/poll/:id', async (request, reply) => {

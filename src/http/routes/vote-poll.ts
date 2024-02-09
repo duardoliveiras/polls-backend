@@ -2,6 +2,7 @@ import { z } from 'zod';
 import { FastifyInstance } from 'fastify'; 
 import { prisma } from '../lib/prisma';
 import { randomUUID } from "node:crypto";
+import { redis } from '../lib/redis';
 
 export async function votePoll(app: FastifyInstance){
     app.post('/poll/:id/vote', async(request, reply) => {
@@ -38,6 +39,8 @@ export async function votePoll(app: FastifyInstance){
 
             // if the user already voted in this poll but in another option
             }else if(userVoteBefore){
+                await redis.zincrby( id, -1, userVoteBefore.pollOptionId ); // decrement the score of the poll option in the poll sorted set
+
                 await prisma.vote.update({
                     where: {
                         id: userVoteBefore.id
@@ -48,6 +51,8 @@ export async function votePoll(app: FastifyInstance){
                     }
                 
                 });
+
+                await redis.zincrby( id, 1, pollOptionId ); // increment the score of the poll option in the poll sorted set
 
                 return reply.status(201).send( { message: "Updated vote."} );
             }
@@ -72,6 +77,14 @@ export async function votePoll(app: FastifyInstance){
                 pollId: id,
             }
         })
+
+        await redis.zincrby( id, 1, pollOptionId );
+        // increment the score of the poll option in the poll sorted set
+
+        // poll:1 = {
+        //     pollOption1: 1,
+        //     pollOption2: 3,
+        // }
 
         return reply.status(201).send({ sessionId });
 
